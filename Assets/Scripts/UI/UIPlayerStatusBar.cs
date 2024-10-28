@@ -17,6 +17,15 @@ public class UIPlayerStatusBar : MonoBehaviour, IModuelUI
     void Update()
     {
         UIUpdate();
+
+        if(Input.GetKeyDown(KeyCode.Q)) 
+        {
+            GameManager.Instance.Player.Status.CurHealth -= 10;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GameManager.Instance.Player.Status.CurStamina -= 10;
+        }
     }
 
     public void Print()
