@@ -66,6 +66,11 @@ public class PlayerController : MonoBehaviour
         rigid.velocity = moveDirection;
     }
 
+    public void Jump(float JumpPower)
+    {
+        rigid.AddForce(Vector3.up * JumpPower, ForceMode.Impulse);
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed)
@@ -87,7 +92,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            rigid.AddForce(Vector3.up * JumpPower, ForceMode.Impulse);
+            Jump(JumpPower);
         }
     }
 }
