@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InterAction : MonoBehaviour
 {
+    public event Action<string,string> OnEventUIInterActionPopUp;
+
     public LayerMask layerMask;
     public float RayDistance;
 
@@ -15,7 +18,12 @@ public class InterAction : MonoBehaviour
 
         if(Physics.Raycast(ray, out hit, RayDistance, layerMask))
         {
-            Debug.Log(hit.transform.name);
+            OnEventUIInterActionPopUp?.Invoke(hit.transform.name,"설명 테스트");
+        }
+        else
+        {
+            UIInterAction UiWindow = UIManager.Instance.UIDict[UIKey.InterAction] as UIInterAction;
+            UiWindow.PopDownWindow();
         }
     }
 }

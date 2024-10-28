@@ -11,6 +11,7 @@ public interface IModuelUI
 public enum UIKey
 {
     PlayerStatusBar = 0,
+    InterAction = 1,
 }
 
 public class UIManager : Singleton<UIManager>
