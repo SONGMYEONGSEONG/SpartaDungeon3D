@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class ItemObject : MonoBehaviour
 {
@@ -39,17 +40,42 @@ public class ItemObject : MonoBehaviour
             {
                 case ConsumableType.Health:
                     playerStatus.CurHealth = Mathf.Min(playerStatus.CurHealth + Item.value, playerStatus.HealthMax);
-                    Debug.Log($"플레이어 HP가 {Item.value} 적용되었습니다.");
-                    Debug.Log($"플레이어 HP : {playerStatus.CurHealth} /  {playerStatus.HealthMax}");
                     break;
+
                 case ConsumableType.Stamina:
-                    playerStatus.CurHealth = Mathf.Min(playerStatus.CurStamina + Item.value, playerStatus.StaminaMax);
-                    Debug.Log($"플레이어 Stamina가 {Item.value} 적용되었습니다.");
-                    Debug.Log($"플레이어 HP : {playerStatus.CurStamina} /  {playerStatus.StaminaMax}");
+                    playerStatus.CurStamina = Mathf.Min(playerStatus.CurStamina + Item.value, playerStatus.StaminaMax);
                     break;
+
+                case ConsumableType.Speed:
+                    playerStatus.CurSpeed = Mathf.Min(playerStatus.CurSpeed + Item.value, playerStatus.SpeedMax);
+                    break;
+            }
+
+            if(Item.isBuff)
+            {
+                StartCoroutine(UseBuff(playerStatus, Item));
             }
         }
     }
 
+    IEnumerator UseBuff(PlayerStatus playerStatus, ItemConsumableType Item)
+    {
+        yield return new WaitForSeconds(Item.bufTime);
+
+        switch (Item.consumableType)
+        {
+            case ConsumableType.Health:
+                playerStatus.CurHealth = Mathf.Max(0, playerStatus.CurHealth - Item.value);
+                break;
+
+            case ConsumableType.Stamina:
+                playerStatus.CurStamina = Mathf.Max(0, playerStatus.CurStamina - Item.value);
+                break;
+
+            case ConsumableType.Speed:
+                playerStatus.CurSpeed = Mathf.Max(playerStatus.SpeedMin, playerStatus.CurSpeed - Item.value);
+                break;
+        }
+    }
 
 }

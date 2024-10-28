@@ -16,16 +16,7 @@ public class UIPlayerStatusBar : MonoBehaviour, IModuelUI
 
     void Update()
     {
-        UIUpdate();
-
-        if(Input.GetKeyDown(KeyCode.Q)) 
-        {
-            GameManager.Instance.Player.Status.CurHealth -= 10;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            GameManager.Instance.Player.Status.CurStamina -= 10;
-        }
+        UIUpdate(); // 나중에 코루틴으로 변결 할것 
     }
 
     public void Print()
@@ -35,7 +26,7 @@ public class UIPlayerStatusBar : MonoBehaviour, IModuelUI
 
     public void UIUpdate()
     {
-        HealthBar.fillAmount = GameManager.Instance.Player.Status.CurHealth / GameManager.Instance.Player.statusSO.Health;
-        StaminaBar.fillAmount = GameManager.Instance.Player.Status.CurStamina / GameManager.Instance.Player.statusSO.Stamina;
+        HealthBar.fillAmount = GameManager.Instance.Player.Status.CurHealth / GameManager.Instance.Player.Status.HealthMax;
+        StaminaBar.fillAmount = GameManager.Instance.Player.Status.CurStamina / GameManager.Instance.Player.Status.StaminaMax;
     }
 }

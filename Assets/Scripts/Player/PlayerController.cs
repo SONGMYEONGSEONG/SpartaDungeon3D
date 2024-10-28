@@ -9,11 +9,10 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rigid;
+    public PlayerStatus status;
 
     [Header("Movement")]
     private Vector2 curMoveInput;
-    public float Speed;
-    public float JumpPower;
     private Vector3 moveDirection;
 
     [Header("Rotation")]
@@ -27,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
+        status = GetComponent<PlayerStatus>();
     }
 
     // Start is called before the first frame update
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     public void Move()
     {
         moveDirection = curMoveInput.y * transform.forward + curMoveInput.x * transform.right;
-        moveDirection *= Speed;
+        moveDirection *= status.CurSpeed;
         moveDirection.y = rigid.velocity.y;
 
         rigid.velocity = moveDirection;
@@ -90,9 +90,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+
+        //지상에 있는지 체크하는 Rat 코드 추가해야됨
         if (context.phase == InputActionPhase.Started)
         {
-            Jump(JumpPower);
+            Jump(status.CurJumpPower);
+            //status.CurStamina -= 10.0f; //매직넘버 수정해야됨
         }
     }
 }
