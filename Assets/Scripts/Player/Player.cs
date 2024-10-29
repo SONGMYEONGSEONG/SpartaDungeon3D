@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public CameraType cameraType;
+
     public CharacterStatusSO statusSO;
     private PlayerController controller;
     private PlayerStatus status;
@@ -16,6 +18,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         GameManager.Instance.Player = this;
+        cameraType = CameraType.TPS;
         controller = gameObject.GetComponent<PlayerController>();
         status = gameObject.GetComponent<PlayerStatus>();
         interAction = gameObject.GetComponent<InterAction>();

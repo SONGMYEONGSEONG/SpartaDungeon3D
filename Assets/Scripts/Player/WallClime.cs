@@ -26,9 +26,6 @@ public class WallClime : MonoBehaviour
             {
                 isCliming = true;
                 rigid.useGravity = false;// 벽에 매달렸으니 떨어지지않게 중력을 끄도록 판정
-
-
-
             }
 
         }

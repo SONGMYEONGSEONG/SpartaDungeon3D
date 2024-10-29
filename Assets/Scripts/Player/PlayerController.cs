@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public float LookSencitive;
     private float curRotX;
 
+
     [Header("IsGrounded")]
     public float RayDistance;
     public Transform GroundPivot;
@@ -79,9 +80,7 @@ public class PlayerController : MonoBehaviour
         else//벽에 매달려있을때
         {
             moveDirection = curMoveInput.y * transform.up + curMoveInput.x * transform.right;
-            moveDirection *= status.CurSpeed;
-            moveDirection.z = status.CurSpeed;
-
+            moveDirection *= status.CurSpeed * 0.5f;
             rigid.AddForce(moveDirection, ForceMode.Impulse);
         }
       
@@ -114,7 +113,6 @@ public class PlayerController : MonoBehaviour
             new Ray(GroundPivot.position + (GroundPivot.right * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
             new Ray(GroundPivot.position + (-GroundPivot.forward * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
          };
-
 
 
         for (int i = 0; i < rays.Length; i++)
