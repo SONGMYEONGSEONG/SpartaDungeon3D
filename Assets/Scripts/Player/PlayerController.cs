@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody rigid;
     public PlayerStatus status;
-
+    private WallClime wallClime;
 
     [Header("Movement")]
     private Vector2 curMoveInput;
@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
         status = GetComponent<PlayerStatus>();
+        wallClime = GetComponent<WallClime>();
     }
 
     // Start is called before the first frame update
@@ -67,11 +68,23 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
-        moveDirection = curMoveInput.y * transform.forward + curMoveInput.x * transform.right;
-        moveDirection *= status.CurSpeed;
-        moveDirection.y = rigid.velocity.y;
+        if(!wallClime.isCliming)
+        {
+            moveDirection = curMoveInput.y * transform.forward + curMoveInput.x * transform.right;
+            moveDirection *= status.CurSpeed;
+            moveDirection.y = rigid.velocity.y;
 
-        rigid.velocity = moveDirection;
+            rigid.velocity = moveDirection;
+        }
+        else//벽에 매달려있을때
+        {
+            moveDirection = curMoveInput.y * transform.up + curMoveInput.x * transform.right;
+            moveDirection *= status.CurSpeed;
+            moveDirection.z = status.CurSpeed;
+
+            rigid.AddForce(moveDirection, ForceMode.Impulse);
+        }
+      
     }
 
     public void Jump(float JumpPower)
@@ -81,6 +94,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        
         if (context.phase == InputActionPhase.Performed)
         {
             curMoveInput = context.ReadValue<Vector2>(); ;

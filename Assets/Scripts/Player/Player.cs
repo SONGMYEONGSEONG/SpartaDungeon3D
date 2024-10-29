@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     private PlayerController controller;
     private PlayerStatus status;
     private InterAction interAction;
-
+    private WallClime wallClime;
     public PlayerController Controller { get { return controller; } }
     public PlayerStatus Status { get { return status; } }
     public InterAction InterAction { get {  return interAction; } }
@@ -19,5 +19,6 @@ public class Player : MonoBehaviour
         controller = gameObject.GetComponent<PlayerController>();
         status = gameObject.GetComponent<PlayerStatus>();
         interAction = gameObject.GetComponent<InterAction>();
+        wallClime = gameObject.GetComponent<WallClime>();
     }
 }
