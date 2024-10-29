@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     private Vector2 curMoveInput;
     private Vector3 moveDirection;
+    public Vector3 ExtraDir; //외부에서 힘을 가할떄 x,z축 이동방향값을 보정해주는 변수
 
     [Header("Rotation")]
     public Transform cameraContainer;
@@ -49,11 +50,13 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+
     }
 
     private void LateUpdate()
     {
         Look();
+        ExtraDirCheck();
     }
 
     private void Look()
@@ -69,13 +72,13 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
-        if(!wallClime.isCliming)
+        if (!wallClime.isCliming)
         {
             moveDirection = curMoveInput.y * transform.forward + curMoveInput.x * transform.right;
             moveDirection *= status.CurSpeed;
             moveDirection.y = rigid.velocity.y;
 
-            rigid.velocity = moveDirection;
+            rigid.velocity = moveDirection + ExtraDir;
         }
         else//벽에 매달려있을때
         {
@@ -83,7 +86,7 @@ public class PlayerController : MonoBehaviour
             moveDirection *= status.CurSpeed * 0.5f;
             rigid.AddForce(moveDirection, ForceMode.Impulse);
         }
-      
+
     }
 
     public void Jump(float JumpPower)
@@ -91,12 +94,18 @@ public class PlayerController : MonoBehaviour
         rigid.AddForce(Vector3.up * JumpPower, ForceMode.Impulse);
     }
 
+    public void Jump(Vector3 dir, float JumpPower)
+    {
+        rigid.AddForce(dir * JumpPower, ForceMode.Impulse);
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
-        
+
         if (context.phase == InputActionPhase.Performed)
         {
             curMoveInput = context.ReadValue<Vector2>(); ;
+            ExtraDir = Vector2.zero;
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
@@ -104,7 +113,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool isGrounded()
+    //외부에서 가한 힘에 의해 적용된 속도 보정값을 
+    //땅에 닿는경우 값을 초기화하는 메서드
+    private void ExtraDirCheck()
+    {
+        Ray ray = new Ray(GroundPivot.position + (GroundPivot.up * 0.01f), Vector3.down);
+
+        if (Physics.Raycast(ray, 0.1f, GroundMask))
+        {
+            ExtraDir = Vector3.zero;
+        }
+    }
+
+    private bool isGrounded()
     {
         Ray[] rays = new Ray[4]
          {
@@ -133,9 +154,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-
-        //지상에 있는지 체크하는 Rat 코드 추가해야됨
-
         if (context.phase == InputActionPhase.Started && status.CurStamina >= 10)
         {
             if (isGrounded())
