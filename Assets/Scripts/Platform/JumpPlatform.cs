@@ -10,7 +10,6 @@ public class JumpPlatform : MonoBehaviour
     {
         if(other.TryGetComponent(out Player player))
         {
-            //player.Controller.Jump(Vector3.up * JumpPlatformPower,ForceMode.Impulse);
             player.Controller.Jump(JumpPlatformPower);
         }
     }
