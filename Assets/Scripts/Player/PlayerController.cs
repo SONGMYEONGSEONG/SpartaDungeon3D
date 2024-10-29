@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     public float RayDistance;
     public Transform GroundPivot;
     public LayerMask GroundMask;
-    private bool jumpAble = false;
 
     private void Awake()
     {
@@ -48,7 +47,6 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
-        isGrounded();
     }
 
     private void LateUpdate()
@@ -93,18 +91,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void isGrounded()
+    public bool isGrounded()
     {
-        Ray ray = new Ray(GroundPivot.position, Vector3.down);
+        Ray[] rays = new Ray[4]
+         {
+            new Ray(GroundPivot.position + (GroundPivot.forward * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
+            new Ray(GroundPivot.position + (-GroundPivot.forward * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
+            new Ray(GroundPivot.position + (GroundPivot.right * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
+            new Ray(GroundPivot.position + (-GroundPivot.forward * 0.2f) + (GroundPivot.up *0.01f), Vector3.down),
+         };
 
-        if (Physics.Raycast(ray, out RaycastHit hit, RayDistance, GroundMask))
+
+
+        for (int i = 0; i < rays.Length; i++)
         {
-            jumpAble = true;
+            if (Physics.Raycast(rays[i], 0.1f, GroundMask))
+            {
+                return true;
+            }
         }
-        else
-        {
-            jumpAble = false;
-        }
+
+        return false;
     }
 
     public void OnLook(InputAction.CallbackContext context)
@@ -114,11 +121,16 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+
         //지상에 있는지 체크하는 Rat 코드 추가해야됨
-        if (context.phase == InputActionPhase.Started && jumpAble && status.CurStamina >= 10)
+
+        if (context.phase == InputActionPhase.Started && status.CurStamina >= 10)
         {
-            Jump(status.CurJumpPower);
-            status.CurStamina = Mathf.Max(0, status.CurStamina - 10);
+            if (isGrounded())
+            {
+                Jump(status.CurJumpPower);
+                status.CurStamina = Mathf.Max(0, status.CurStamina - 10);
+            }
         }
     }
 }
