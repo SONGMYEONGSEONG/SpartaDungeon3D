@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using static UnityEditor.Progress;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rigid;
     public PlayerStatus status;
+
 
     [Header("Movement")]
     private Vector2 curMoveInput;
@@ -22,6 +25,12 @@ public class PlayerController : MonoBehaviour
     public float MaxRotX;
     public float LookSencitive;
     private float curRotX;
+
+    [Header("IsGrounded")]
+    public float RayDistance;
+    public Transform GroundPivot;
+    public LayerMask GroundMask;
+    private bool jumpAble = false;
 
     private void Awake()
     {
@@ -39,6 +48,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        isGrounded();
     }
 
     private void LateUpdate()
@@ -83,6 +93,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void isGrounded()
+    {
+        Ray ray = new Ray(GroundPivot.position, Vector3.down);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, RayDistance, GroundMask))
+        {
+            jumpAble = true;
+        }
+        else
+        {
+            jumpAble = false;
+        }
+    }
+
     public void OnLook(InputAction.CallbackContext context)
     {
         mouseDelta = context.ReadValue<Vector2>();
@@ -90,12 +114,11 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-
         //지상에 있는지 체크하는 Rat 코드 추가해야됨
-        if (context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started && jumpAble && status.CurStamina >= 10)
         {
             Jump(status.CurJumpPower);
-            //status.CurStamina -= 10.0f; //매직넘버 수정해야됨
+            status.CurStamina = Mathf.Max(0, status.CurStamina - 10);
         }
     }
 }
