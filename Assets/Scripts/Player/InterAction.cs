@@ -18,6 +18,8 @@ public class InterAction : MonoBehaviour
     public float RayDistance;
 
     private RaycastHit hit;
+    private string targetName;
+    private string targetDescription;
 
     private void Update()
     {
@@ -32,9 +34,14 @@ public class InterAction : MonoBehaviour
             RayDistance = 3.0f;
             ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
         }
+
+
         if (Physics.Raycast(ray, out hit, RayDistance, layerMask))
         {
-            OnEventUIInterActionPopUp?.Invoke(hit.transform.name, "설명 테스트");
+            targetName = hit.transform.GetComponent<InterActableObject>().ObjectSO.Name;
+            targetDescription = hit.transform.GetComponent<InterActableObject>().ObjectSO.Description;
+
+            OnEventUIInterActionPopUp?.Invoke(targetName, targetDescription);
         }
         else
         {
